@@ -79,6 +79,7 @@ const ConfirmationContainer = styled.div`
   animation: fadeIn 0.3s ease-in-out;
   max-width: 500px;
   margin: 0 auto;
+  overflow: hidden;
   
   @keyframes fadeIn {
     from {
@@ -91,52 +92,67 @@ const ConfirmationContainer = styled.div`
 `;
 
 const Header = styled.div`
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 16px;
+  background-color: #4CAF50;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 `;
 
 const HeaderTitle = styled.h2`
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  
+  svg {
+    margin-right: 2px;
+    width: 18px;
+    height: 18px;
+  }
 `;
 
 const RideStatusBadge = styled.span`
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 4px 10px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  margin-left: 8px;
+  background-color: rgba(255, 255, 255, 0.25);
+  font-size: 11px;
+  font-weight: normal;
+  padding: 3px 6px;
+  border-radius: 100px;
+  margin-left: 6px;
 `;
 
 const MapWrapper = styled.div`
-  height: 250px;
+  height: 170px;
+  width: 100%;
   position: relative;
+  overflow: hidden;
   
   .leaflet-container {
-    width: 100%;
     height: 100%;
+    width: 100%;
     z-index: 1;
   }
 `;
 
 const RideDetailsSection = styled.div`
-  padding: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin: 8px 16px;
+  overflow: hidden;
 `;
 
 const LocationInfoContainer = styled.div`
   display: flex;
-  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
 `;
 
 const IconColumn = styled.div`
@@ -146,34 +162,15 @@ const IconColumn = styled.div`
   align-items: center;
 `;
 
-const LocationIcon = styled.div`
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: ${props => props.type === 'pickup' ? '#4CAF50' : '#F44336'};
-  margin-bottom: ${props => props.type === 'pickup' ? '0' : 'auto'};
-  position: relative;
-  z-index: 1;
-`;
-
-const ConnectingLine = styled.div`
-  width: 2px;
-  height: 30px;
-  background-color: #e0e0e0;
-  margin: 4px 0;
-`;
-
 const LocationInfo = styled.div`
   flex-grow: 1;
 `;
 
 const LocationLabel = styled.div`
-  font-size: 13px;
-  color: #9e9e9e;
-  margin-bottom: 4px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-size: 10px;
+  font-weight: 600;
+  color: #757575;
+  margin-bottom: 2px;
 `;
 
 const LocationName = styled.div`
@@ -183,39 +180,68 @@ const LocationName = styled.div`
 `;
 
 const RideDetails = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 12px 16px;
 `;
 
 const DetailBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-width: 100px;
+  text-align: center;
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: ${props => props.primary ? '#f9f9f9' : 'transparent'};
+  border: ${props => props.primary ? '1px solid #eaeaea' : 'none'};
+`;
+
+const LocationIcon = styled.div`
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: ${props => props.type === 'pickup' ? '#4CAF50' : '#F44336'};
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px ${props => props.type === 'pickup' ? '#4CAF5044' : '#F4433644'};
+  margin: ${props => props.type === 'pickup' ? '0' : 'auto 0 0 0'};
+  position: relative;
+  z-index: 1;
 `;
 
 const DetailLabel = styled.div`
-  font-size: 13px;
-  color: #9e9e9e;
-  margin-bottom: 4px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
 `;
 
 const DetailValue = styled.div`
-  font-size: ${props => props.large ? '22px' : '15px'};
-  font-weight: ${props => props.large ? '600' : '500'};
+  font-weight: ${props => props.large ? 'bold' : '500'};
+  font-size: ${props => props.large ? '18px' : '15px'};
   color: #333;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 `;
 
 const RupeeSymbol = styled.span`
   font-family: system-ui;
+`;
+
+const NavigationSection = styled.div`
+  padding: 0;
+  background-color: white;
+  margin: 8px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: visible;
+  width: calc(100% - 32px);
+  position: relative;
+  z-index: 5;
+`;
+
+const ConnectingLine = styled.div`
+  width: 2px;
+  height: 30px;
+  background-color: #e0e0e0;
+  margin: 4px 0;
 `;
 
 const PassengerSection = styled.div`
@@ -228,6 +254,22 @@ const PassengerHeader = styled.h3`
   font-size: 16px;
   font-weight: 600;
   color: #333;
+`;
+
+const SectionHeader = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #eeeeee;
+  display: flex;
+  align-items: center;
+  color: #444;
+  
+  svg {
+    margin-right: 8px;
+    fill: #4CAF50;
+  }
 `;
 
 const PassengerCard = styled.div`
@@ -282,10 +324,16 @@ const Star = styled.span`
 `;
 
 const ActionButtonsContainer = styled.div`
-  display: flex;
-  gap: 16px;
-  padding: 24px 20px;
-  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: white;
+  border-top: 1px solid #f0f0f0;
+  position: sticky;
+  bottom: 0;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+  z-index: 10;
 `;
 
 const ConfirmOverlay = styled.div`
@@ -359,14 +407,14 @@ const ConfirmActionButton = styled(ConfirmButton)`
 
 const ActionButton = styled.button`
   flex: 1;
-  height: 54px;
-  border-radius: 100px;
+  height: 42px;
+  border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   border: none;
   transition: all 0.2s ease;
@@ -386,8 +434,17 @@ const CallButton = styled(ActionButton)`
   background-color: #4CAF50;
   color: white;
   box-shadow: 0px 2px 8px rgba(76, 175, 80, 0.2);
+  padding: 8px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  &:hover {
+    background-color: #43A047;
+  }
   
   svg {
+    margin-right: 4px;
     fill: white;
   }
 `;
@@ -406,12 +463,14 @@ const EndRideButton = styled(ActionButton)`
   background-color: #F44336;
   color: white;
   box-shadow: 0px 2px 8px rgba(244, 67, 54, 0.2);
+  padding: 8px 16px;
   
   &:hover {
     background-color: #E53935;
   }
   
   svg {
+    margin-right: 6px;
     fill: white;
   }
 `;
@@ -425,7 +484,7 @@ const RideConfirmationScreen = ({
     passengerName: 'Rahul Kumar',
     passengerRating: 4.8,
     passengerPhone: '+91 98765 43210',
-    fare: 'Meter fare',
+    fare: 'Meter Fare Only',
     distance: '14.2 km',
     duration: '32 mins'
   }
@@ -518,7 +577,6 @@ const RideConfirmationScreen = ({
           <CarIcon /> Active Ride <RideStatusBadge>In Progress</RideStatusBadge>
         </HeaderTitle>
       </Header>
-      
       <MapWrapper>
         <MapContainer 
           center={mapCenter} 
@@ -565,10 +623,10 @@ const RideConfirmationScreen = ({
         </LocationInfoContainer>
         
         <RideDetails>
-          <DetailBlock>
+          <DetailBlock primary>
             <DetailLabel>FARE</DetailLabel>
             <DetailValue large>
-              {rideDetails.fare}
+              Meter Fare Only
             </DetailValue>
           </DetailBlock>
           
@@ -584,23 +642,50 @@ const RideConfirmationScreen = ({
         </RideDetails>
       </RideDetailsSection>
       
-      <PassengerSection>
-        <PassengerHeader>Passenger Information</PassengerHeader>
-        <PassengerCard>
-          <Avatar>{rideDetails.passengerName.charAt(0)}</Avatar>
-          <PassengerInfo>
-            <PassengerName>{rideDetails.passengerName}</PassengerName>
-            {/* <PassengerRating>
-              <Star>★</Star> {rideDetails.passengerRating}
-            </PassengerRating> */}
-            {/* <PassengerPhone>{rideDetails.passengerPhone}</PassengerPhone> */}
-          </PassengerInfo>
-        </PassengerCard>
-      </PassengerSection>
+      <NavigationSection>
+        <SectionHeader>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+          Navigation
+        </SectionHeader>
+        <div style={{ padding: '10px 16px 14px' }}>
+          <button 
+            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(rideDetails.pickup)}&destination=${encodeURIComponent(rideDetails.destination)}`, '_blank')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#4285F4',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white" style={{ marginRight: '6px' }}>
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            Navigate on Google Maps
+          </button>
+        </div>
+      </NavigationSection>
       
       <ActionButtonsContainer>
         <CallButton onClick={handleCall}>
-          <PhoneIcon /> Call Passenger
+          <PhoneIcon />
+          <div>
+            <div style={{ fontWeight: 'bold', fontSize: '14px' }}>VOIP Call</div>
+            <div style={{ fontSize: '10px', marginTop: '2px' }}>₹1 added to promise2pay</div>
+          </div>
         </CallButton>
         <EndRideButton onClick={handleEndRideClick}>
           <EndRideIcon /> End Ride

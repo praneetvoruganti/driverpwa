@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ToggleSwitch from './ToggleSwitch';
 import VehicleDetails from './VehicleDetails';
 import LiveMap from './LiveMap';
 import NotificationBanner from './NotificationBanner';
 import RideRequestBanner from './RideRequestBanner';
+import RideRequestTicker from './RideRequestTicker';
 import RideConfirmationScreen from './RideConfirmationScreen';
 import MainMenu from './MainMenu';
 import PlaceholderPage from './PlaceholderPage';
@@ -118,6 +119,7 @@ const Note = styled.div`
   border-radius: 12px;
   padding: 0.75rem 1rem;
   margin-top: 1rem;
+  margin-bottom: ${props => props.showTicker ? '0.5rem' : '0'};
   font-size: 14px;
   color: ${props => props.online ? '#2E7D32' : '#616161'};
   display: flex;
@@ -179,29 +181,82 @@ const TestRequestButton = styled.button`
   }
 `;
 
+const TickerHeading = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 8px 8px 0 0;
+  margin-top: 16px;
+`;
+
 const sampleRideRequests = [
   {
-    pickup: 'Koramangala, Bengaluru',
-    destination: 'Electronic City, Bengaluru',
-    fare: 'Meter fare',
+    pickup: 'Bandra, Mumbai',
+    destination: 'Andheri, Mumbai',
+    fare: 'Meter Fare Only',
     distance: '12.4 km',
     duration: '25 mins',
     timeout: 15
   },
   {
-    pickup: 'Indiranagar, Bengaluru',
-    destination: 'Whitefield, Bengaluru',
-    fare: 'Meter fare',
+    pickup: 'Colaba, Mumbai',
+    destination: 'Worli, Mumbai',
+    fare: 'Meter Fare Only',
     distance: '16.8 km',
     duration: '32 mins',
     timeout: 15
   },
   {
-    pickup: 'MG Road, Bengaluru',
-    destination: 'Hebbal, Bengaluru',
-    fare: 'Meter fare',
+    pickup: 'Juhu Beach, Mumbai',
+    destination: 'Powai, Mumbai',
+    fare: 'Meter Fare Only',
     distance: '14.2 km',
     duration: '28 mins',
+    timeout: 15
+  },
+  {
+    pickup: 'Dadar, Mumbai',
+    destination: 'Chembur, Mumbai',
+    fare: 'Meter Fare Only',
+    distance: '10.8 km',
+    duration: '22 mins',
+    timeout: 15
+  },
+  {
+    pickup: 'Churchgate, Mumbai',
+    destination: 'Marine Drive, Mumbai',
+    fare: 'Meter Fare Only',
+    distance: '7.5 km',
+    duration: '18 mins',
+    timeout: 15
+  },
+  {
+    pickup: 'Malad, Mumbai',
+    destination: 'Goregaon, Mumbai',
+    fare: 'Meter Fare Only',
+    distance: '9.2 km',
+    duration: '30 mins',
+    timeout: 15
+  },
+  {
+    pickup: 'BKC, Mumbai',
+    destination: 'Santacruz, Mumbai',
+    fare: 'Meter Fare Only',
+    distance: '5.3 km',
+    duration: '15 mins',
+    timeout: 15
+  },
+  {
+    pickup: 'Lower Parel, Mumbai',
+    destination: 'Prabhadevi, Mumbai',
+    fare: 'Meter Fare Only',
+    distance: '8.1 km',
+    duration: '20 mins',
     timeout: 15
   }
 ];
@@ -213,6 +268,9 @@ const HomeScreen = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [currentRideRequest, setCurrentRideRequest] = useState(sampleRideRequests[0]);
   const [currentPage, setCurrentPage] = useState(null);
+  const [activeRideRequests, setActiveRideRequests] = useState([]);
+  const [showTickerRequests, setShowTickerRequests] = useState(false);
+  const [showComprehensiveView, setShowComprehensiveView] = useState(false);
 
   const handleToggleChange = (status) => {
     setIsOnline(status);
@@ -225,11 +283,84 @@ const HomeScreen = () => {
       return;
     }
     
-    // Pick a random ride request from our samples
-    const randomIndex = Math.floor(Math.random() * sampleRideRequests.length);
-    setCurrentRideRequest(sampleRideRequests[randomIndex]);
-    setShowRideRequest(true);
+    // Generate new batch of ride requests for the ticker
+    generateRideRequests();
+    
+    // Make sure ticker is visible
+    setShowTickerRequests(true);
   };
+  
+  // Generate between 3-6 random ride requests for the ticker
+  const generateRideRequests = () => {
+    if (!isOnline) return;
+    
+    // Clear existing requests first
+    setActiveRideRequests([]);
+    
+    // Determine how many rides to show (3-6)
+    const rideCount = Math.floor(Math.random() * 4) + 3;
+    
+    // Generate random ride requests
+    const newRideRequests = [];
+    const usedIndices = new Set();
+    
+    for (let i = 0; i < rideCount; i++) {
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * sampleRideRequests.length);
+      } while (usedIndices.has(randomIndex));
+      
+      usedIndices.add(randomIndex);
+      newRideRequests.push(sampleRideRequests[randomIndex]);
+    }
+    
+    setActiveRideRequests(newRideRequests);
+  };
+  
+  // Refresh ride requests - remove randomly 1-2 rides and add 1-2 new ones
+  const handleRefreshRides = () => {
+    if (!isOnline || activeRideRequests.length === 0) return;
+    
+    // Make a copy of the current requests
+    let updatedRequests = [...activeRideRequests];
+    
+    // Randomly remove 1 or 2 rides (simulating rides that were taken by other drivers)
+    const removalsCount = Math.min(updatedRequests.length - 1, Math.floor(Math.random() * 2) + 1);
+    for (let i = 0; i < removalsCount; i++) {
+      const indexToRemove = Math.floor(Math.random() * updatedRequests.length);
+      updatedRequests.splice(indexToRemove, 1);
+    }
+    
+    // Add 1-2 new ride requests
+    const additionsCount = Math.floor(Math.random() * 2) + 1;
+    const usedDestinations = new Set(updatedRequests.map(ride => ride.destination));
+    
+    for (let i = 0; i < additionsCount; i++) {
+      let randomIndex;
+      let candidate;
+      
+      // Find a ride request that's not already in the list
+      do {
+        randomIndex = Math.floor(Math.random() * sampleRideRequests.length);
+        candidate = sampleRideRequests[randomIndex];
+      } while (usedDestinations.has(candidate.destination));
+      
+      updatedRequests.push(candidate);
+      usedDestinations.add(candidate.destination);
+    }
+    
+    setActiveRideRequests(updatedRequests);
+  };
+  
+  // Effect to generate rides when going online
+  useEffect(() => {
+    if (isOnline) {
+      generateRideRequests();
+    } else {
+      setShowTickerRequests(false);
+      setActiveRideRequests([]);
+    }
+  }, [isOnline]);
   
   const handleCloseRideRequest = () => {
     setShowRideRequest(false);
@@ -237,6 +368,13 @@ const HomeScreen = () => {
   
   const handleAcceptRide = () => {
     setShowRideRequest(false);
+    // Show the ride confirmation screen
+    setShowRideConfirmation(true);
+  };
+  
+  const handleAcceptTickerRide = (rideRequest) => {
+    // Set the accepted ride as the current ride
+    setCurrentRideRequest(rideRequest);
     // Show the ride confirmation screen
     setShowRideConfirmation(true);
   };
@@ -308,7 +446,7 @@ const HomeScreen = () => {
         onAccept={handleAcceptRide} 
         rideDetails={currentRideRequest}
       />
-      
+            
       <RideConfirmationScreen
         isVisible={showRideConfirmation}
         onClose={handleEndRide}
@@ -366,18 +504,89 @@ const HomeScreen = () => {
       </Header>
       
       <ContentContainer>
-        <VehicleDetails />
-        
-        <LiveMap />
-        
-        <NotificationBanner />
-        
-        <Note online={isOnline} visible={isOnline}>
+        <Note online={isOnline} visible={isOnline} showTicker={showTickerRequests && activeRideRequests.length > 0}>
           <NoteIcon>
             <InfoIcon />
           </NoteIcon>
           You're visible to riders in your area. Keep your phone and data connection active.
         </Note>
+        
+        {/* 1. Main Ride Requests Ticker - Highest priority */}
+        {showTickerRequests && activeRideRequests.length > 0 && (
+          <div style={{ marginBottom: '1rem' }}>
+            <TickerHeading>
+              <span>Available Ride Requests</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <span style={{ marginBottom: '8px' }}>{activeRideRequests.length} requests</span>
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <button 
+                    onClick={() => setShowComprehensiveView(!showComprehensiveView)}
+                    style={{
+                      backgroundColor: showComprehensiveView ? '#4CAF50' : '#f0f0f0',
+                      color: showComprehensiveView ? 'white' : '#333',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      fontSize: '13px',
+                      fontWeight: '500'
+                    }}
+                    title="Show all rides at once"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z" />
+                    </svg>
+                    {showComprehensiveView ? 'List View' : 'Show All'}
+                  </button>
+                  <button 
+                    onClick={handleRefreshRides} 
+                    style={{
+                      backgroundColor: '#4CAF50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      fontSize: '13px',
+                      fontWeight: '500'
+                    }}
+                    title="Refresh ride requests"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 12h7V5l-2.35 1.35z" />
+                    </svg>
+                    Refresh
+                  </button>
+                </div>
+              </div>
+            </TickerHeading>
+            <RideRequestTicker
+              isVisible={showTickerRequests && activeRideRequests.length > 0}
+              rideRequests={activeRideRequests}
+              onAccept={handleAcceptTickerRide}
+              onRefresh={handleRefreshRides}
+              comprehensiveView={showComprehensiveView}
+            />
+          </div>
+        )}
+        
+        {/* 2. Vehicle Details - Second priority */}
+        <VehicleDetails />
+        
+        {/* 3. Live Map - Third priority */}
+        <LiveMap />
+        
+        <NotificationBanner />
       </ContentContainer>
       
       {isOnline && (

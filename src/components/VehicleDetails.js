@@ -189,7 +189,7 @@ const SaveButton = styled(Button)`
 
 const VehicleDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [vehicle, setVehicle] = useState({
     vehicleNumber: '',
     vehicleClass: '',

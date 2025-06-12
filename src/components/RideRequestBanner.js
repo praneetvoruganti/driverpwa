@@ -359,7 +359,7 @@ const RideRequestBanner = ({
   rideDetails = {
     pickup: 'Banjara Hills, Hyderabad',
     destination: 'Hitech City, Hyderabad',
-    fare: 'Meter fare',
+    fare: 'Meter Fare Only',
     distance: '14.2 km',
     duration: '32 mins',
     timeout: 15 // seconds
@@ -495,9 +495,9 @@ const RideRequestBanner = ({
       <RideDetailsContainer>
         <RideDetails>
           <DetailBlock>
-            <DetailLabel>ESTIMATED FARE</DetailLabel>
+            <DetailLabel>FARE</DetailLabel>
             <DetailValue large>
-              {rideDetails.fare}
+              Meter Fare Only
             </DetailValue>
           </DetailBlock>
           

@@ -304,7 +304,7 @@ const LiveMap = () => {
         )}
       </MapWrapper>
       
-      {!loading && !error && position && (
+      {/* {!loading && !error && position && (
         <AddressBar>
           <LocationIcon>
             <LocationPinIcon />
@@ -313,7 +313,7 @@ const LiveMap = () => {
             {address}
           </LocationText>
         </AddressBar>
-      )}
+      )} */}
     </MapCard>
   );
 };
